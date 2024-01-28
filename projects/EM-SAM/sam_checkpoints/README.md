@@ -1,0 +1,1 @@
+## **Please put your downloaded SAM-checkpoints in this folder.**
