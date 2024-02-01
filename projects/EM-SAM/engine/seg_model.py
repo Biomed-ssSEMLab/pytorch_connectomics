@@ -6,20 +6,10 @@ import math
 
 from .build_sam import sam_model_registry
 from connectomics.model.utils.misc import IntermediateLayerGetter
-# from .mae_modeling.models_mae import *
-# from .mae_modeling.pos_embed import interpolate_pos_embed
 
 backbone_param_dict = {
     'vit_b': [12,768],
     'vit_l': [24,1024],}
-
-
-# backbone_dict = {
-#     'mae_vit_b': mae_vit_base_patch16_dec512d8b,
-#     'mae_vit_l': mae_vit_large_patch16_dec512d8b,
-#     'mae_vit_h': mae_vit_huge_patch14_dec512d8b,
-# }
-
 
 def load_Encoder(arch = "vit_b", checkpoint_path = ""):
     bb_arch, bb_size = arch.split('_')[0], arch.split('_')[1]+'_'+arch.split('_')[2]
@@ -33,34 +23,17 @@ def load_Encoder(arch = "vit_b", checkpoint_path = ""):
                          # 'neck': feat_keys[2]}
 
         return IntermediateLayerGetter(backbone.image_encoder, return_layers)
-    # elif bb_arch == 'mae':
-
-    #     if bb_size == 'vit_b':
-    #         checkpoint_path = '/ygs/personal/chengao/connectomics_project/projects/P95/checkpoints/mae_pretrain_vit_base.pth'
-    #     elif bb_size == 'vit_l':
-    #         checkpoint_path = '/ygs/personal/chengao/connectomics_project/projects/P95/checkpoints/mae_pretrain_vit_large.pth'
-    #     checkpoint = torch.load(checkpoint_path, map_location='cpu')
-    #     backbone = backbone_dict[arch]()
-    #     print("Load pre-trained checkpoint from: %s" % checkpoint_path)
-    #     checkpoint_model = checkpoint['model']
-    #     state_dict = backbone.state_dict()
-    #     for k in ['head.weight', 'head.bias']:
-    #         if k in checkpoint_model and checkpoint_model[k].shape != state_dict[k].shape:
-    #             print(f"Removing key {k} from pretrained checkpoint")
-    #             del checkpoint_model[k]
-    #     interpolate_pos_embed(backbone, checkpoint_model)
-    #     backbone.load_state_dict(checkpoint_model, strict=False)
-
-    #     feat_keys = [None] * 2
-    #     return_layers = {'patch_embed': feat_keys[0],
-    #                      'blocks': feat_keys[1],}
-
-    #     return IntermediateLayerGetter(backbone, return_layers)
 
 class unetr(nn.Module):
-    def __init__(self, img_shape=(1024, 1024), input_dim=3, output_dim=3,
-                 embed_dim=768, patch_size=16, dropout=0.1,
-                 arch = '', checkpoints = "./sam_checkpoints/sam_vit_b_01ec64.pth",
+    def __init__(self, 
+                 img_shape, 
+                 input_dim, 
+                 output_dim,
+                 embed_dim, 
+                 patch_size, 
+                 dropout,
+                 arch: str, 
+                 checkpoints: str,
                  ):
         super().__init__()
         self.input_dim = input_dim
@@ -130,63 +103,7 @@ class unetr(nn.Module):
                 Conv2DBlock(64, 64),
                 SingleConv2DBlock(64, output_dim, 1)
             )
-
-        # '''
-        # beijing cc
-        # '''
-        # self.decoder0 = \
-        #     nn.Sequential(
-        #         Conv2DBlock(input_dim, 32, 3),
-        #         # Conv2DBlock(32, 64, 3)
-        #     )
-        #
-        # self.decoder3 = \
-        #     nn.Sequential(
-        #         Deconv2DBlock(self.embed_dim, 256),
-        #         Deconv2DBlock(256, 64),
-        #         Deconv2DBlock(64, 64)
-        #     )
-        #
-        # self.decoder6 = \
-        #     nn.Sequential(
-        #         Deconv2DBlock(self.embed_dim, 256),
-        #         Deconv2DBlock(256, 128),
-        #     )
-        #
-        # self.decoder9 = \
-        #     Deconv2DBlock(self.embed_dim, 256)
-        #
-        # self.decoder12_upsampler = \
-        #     SingleDeconv2DBlock(self.embed_dim, 256)
-        #
-        # self.decoder9_upsampler = \
-        #     nn.Sequential(
-        #         Conv2DBlock(512, 256),
-        #         # Conv2DBlock(512, 512),
-        #         # Conv2DBlock(512, 512),
-        #         SingleDeconv2DBlock(256, 128)
-        #     )
-        #
-        # self.decoder6_upsampler = \
-        #     nn.Sequential(
-        #         Conv2DBlock(256, 128),
-        #         # Conv2DBlock(256, 256),
-        #         SingleDeconv2DBlock(128, 64)
-        #     )
-        #
-        # self.decoder3_upsampler = \
-        #     nn.Sequential(
-        #         Conv2DBlock(128, 64),
-        #         # Conv2DBlock(128, 128),
-        #         SingleDeconv2DBlock(64, 32)
-        #     )
-        #
-        # self.decoder0_header = \
-        #     nn.Sequential(
-        #         Conv2DBlock(64, 32),
-        #         # Conv2DBlock(64, 64),
-        #         SingleConv2DBlock(32, output_dim, 1)
-        #     )
+            
     def forward(self, x):
         x = torch.cat([x, x, x], dim=1)
         z = self.backbone.patch_embed(x)

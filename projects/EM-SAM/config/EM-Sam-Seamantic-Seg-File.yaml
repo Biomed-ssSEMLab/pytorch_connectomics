@@ -1,0 +1,34 @@
+MODEL:
+  IN_PLANES: 1
+  OUT_PLANES: 3
+  LOSS_OPTION: [["WeightedCE"]]
+  LOSS_WEIGHT: [[1.0]]
+  # Currently for multi-class semantic segmentation, only one
+  # target option is supported. Using other options with semantic
+  # segmentation will be supported in future release.
+  TARGET_OPT: ["9-3"]
+  WEIGHT_OPT: [["1"]]
+  OUTPUT_ACT: [["none"]]
+DECODER:
+  IMAGE_SHAPE: [1024,1024]
+  INPUT_DIM: 3
+  OUTPUT_DIM: 3
+  EMBED_DIM: 768
+  PATCH_SIZE: 16
+  DROPOUT: 0.1
+  ARCHITECTURE: 'sam_vit_b'
+  CHECKPOINTS: './sam_checkpoints/sam_vit_b_01ec64.pth'
+SOLVER:
+  ITERATION_SAVE: 10000  # You can change this as you need
+  ITERATION_TOTAL: 200000  # You can change this as you need
+  SAMPLES_PER_BATCH: 2  # You can change this as you need
+DATASET:
+  IMAGE_NAME: 'image.tif'
+  LABEL_NAME: 'imagelabel.tif'
+  INPUT_PATH: 'datasets/EM-SAM/train_or_inference'
+  OUTPUT_PATH: 'Path/to/save/checkpoints/during/training'
+INFERENCE:
+  IMAGE_NAME: "seg_raw_image.tif"
+  OUTPUT_NAME: 'seg_output_name'
+  OUTPUT_PATH: "Path/to/save/results/of/segmentation"
+  OUTPUT_ACT: ["softmax"]

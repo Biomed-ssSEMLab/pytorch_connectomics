@@ -39,6 +39,7 @@ class TrainerP95(Trainer):
                  device: torch.device,
                  mode: str = 'train',
                  rank: Optional[int] = None,
+
                  checkpoint: Optional[str] = None):
 
         self.device = device
@@ -50,17 +51,15 @@ class TrainerP95(Trainer):
         self.is_main_process = rank is None or rank == 0
         self.inference_singly = (mode == 'test') and cfg.INFERENCE.DO_SINGLY
         if self.cfg.MODEL.ARCHITECTURE.split('_')[0] == 'sam':
-            self.model = make_parallel(unetr(output_dim=self.cfg.MODEL.OUT_PLANES,
-                                             arch=cfg.MODEL.ARCHITECTURE,
-                                             checkpoints = './sam_checkpoints/sam_vit_b_01ec64.pth'),
+            self.model = make_parallel(unetr(img_shape = self.cfg.DECODER.IMAGE_SHAPE,
+                                             input_dim = self.cfg.DECODER.INPUT_DIM,
+                                             output_dim = self.cfg.DECODER.OUTPUT_DIM,
+                                             embed_dim = self.cfg.DECODER.EMBED_DIM,
+                                             patch_size = self.cfg.DECODER.PATCH_SIZE,
+                                             dropout = self.cfg.DECODER.DROPOUT,
+                                             arch = self.cfg.DECODER.ARCHITECTURE,
+                                             checkpoints = self.cfg.DECODER.CHECKPOINTS),
                                              self.cfg, self.device, self.rank, find_unused_parameters=True)
-            
-        # elif self.cfg.MODEL.ARCHITECTURE.split('_')[0] == 'mae':
-        #     self.model = make_parallel(unetr(output_dim=self.cfg.MODEL.OUT_PLANES,
-        #                                      img_shape=(224, 224),
-        #                                      arch = cfg.MODEL.ARCHITECTURE,
-        #                                      checkpoints = '../sam_checkpoints/sam_vit_b_01ec64.pth'),
-        #                                      self.cfg, self.device, self.rank, find_unused_parameters=True)
         else:
             self.model = build_model(self.cfg, self.device, rank)
 

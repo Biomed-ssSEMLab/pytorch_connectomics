@@ -7,20 +7,22 @@
 * The checkpoints for the SAM model you can download by clicking [here](https://github.com/facebookresearch/segment-anything#model-checkpoints), there are three versions and we are using '**vit_b**' this version. The '**vit_b**' should be downloaded in the ***sam_checkpoints*** folder. If you want to use another version, please download it in the same way.
 
 ### Configurations
-You can change the following parameters in the configuration file we provide (*EM-Sam-Seamantic-Seg.yaml*) to apply to your data path and device.
+Please adjust the parameters in the provided configuration file ***(EM-Sam-Seamantic-Seg-File.yaml)*** to accommodate your dataset directory and hardware configuration.
 ```yaml
-SYSTEM:
-  NUM_GPUS: number #The GPU numbers in your device you need to use
-  NUM_CPUS: number #The CPU numbers in your device you need to use
+SOLVER:
+  ITERATION_SAVE: 10000  # You can change this as you need
+  ITERATION_TOTAL: 200000  # You can change this as you need
+  SAMPLES_PER_BATCH: 2  # You can change this as you need
 DATASET:
-  IMAGE_NAME: 'The training images name'
-  LABEL_NAME: 'The label images name corresponding to the training images'
-  INPUT_PATH: 'The data inputpath you need to use in your device, inculding training images, label images and test images. We refer to put this datas in same folder.'
-  OUTPUT_PATH: 'The path to save the checkpoints of the model during training.'
+  IMAGE_NAME: 'image.tif'
+  LABEL_NAME: 'imagelabel.tif'
+  INPUT_PATH: 'datasets/EM-SAM/train_or_inference'
+  OUTPUT_PATH: 'Path/to/save/checkpoints/during/training'
 INFERENCE:
-  IMAGE_NAME: 'The test images name'
-  OUTPUT_PATH: 'The path to save the segmentation results of test images '
-  OUTPUT_NAME: 'The name of the segmentation results'
+  IMAGE_NAME: "seg_raw_image.tif"
+  OUTPUT_NAME: 'seg_output_name'
+  OUTPUT_PATH: "Path/to/save/results/of/segmentation"
+  OUTPUT_ACT: ["softmax"]
 ```
 
 ### Command
@@ -29,16 +31,16 @@ After completing the configuration file changes, you can run the following comma
 **Training command:**
 ```bash
 CUDA_VIISBLE_DEVICES=0,1,2,3,4,5,6 python main.py \
---config-file config/EM-Sam-Seamantic-Seg.yaml \
---config-base config/EM-Sam-Seamantic-Seg.yaml
+--config-base config/EM-Sam-Base.yaml \
+--config-file config/EM-Sam-Seamantic-Seg-File.yaml
 ```
 **Inference command:**
 ```bash
 CUDA_VIISBLE_DEVICES=0,1,2,3,4,5,6 python main.py \
---config-file config/EM-Sam-Seamantic-Seg.yaml \
---config-base config/EM-Sam-Seamantic-Seg.yaml \
+--config-base config/EM-Sam-Base.yaml \
+--config-file config/EM-Sam-Seamantic-Seg-File.yaml \
 --inference \
---checkpoint path of your checkpoints/checkpoints name
+--checkpoint path/of/your/checkpoints/checkpoints/name
 ```
 
 ### Dataset

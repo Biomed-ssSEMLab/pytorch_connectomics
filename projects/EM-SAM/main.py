@@ -4,7 +4,7 @@ import torch
 from connectomics.utils.system import get_args, init_devices
 from connectomics.config import load_cfg, save_all_cfg
 from engine.trainer import TrainerP95
-from engine.config import add_P95_config
+
 
 def main():
     args = get_args()

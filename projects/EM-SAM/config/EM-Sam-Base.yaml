@@ -1,0 +1,36 @@
+# All other configurations are set by default. If you want to add new config options,
+# please modify ../connectomics/config/config.py
+SYSTEM:
+  NUM_GPUS: 2 
+  NUM_CPUS: 8
+MODEL:
+  ARCHITECTURE: 'sam_vit_b'  # If you are using another version of sam-checkpoints, please also change this.
+  INPUT_SIZE: [1, 1024, 1024]
+  OUTPUT_SIZE: [1, 1024, 1024]
+  FILTERS: [32, 64, 128, 256, 512]
+AUGMENTOR:
+    MISSINGPARTS:
+        ENABLED: FALSE
+DATASET:
+  PAD_SIZE: [0, 256, 256]
+  DATA_SCALE: [1.0, 1.0, 1.0]
+  REJECT_SAMPLING:
+    SIZE_THRES: 1000
+    P: 1.0
+  DISTRIBUTED: False
+  DO_2D: True
+  LOAD_2D: True
+SOLVER:
+  LR_SCHEDULER_NAME: WarmupCosineLR
+  BASE_LR: 0.01
+  ITERATION_STEP: 1
+#  STEPS: (40000, 45000)
+INFERENCE:
+  INPUT_SIZE: [1, 1024, 1024]
+  OUTPUT_SIZE: [1, 1024, 1024]
+  AUG_MODE: mean
+  AUG_NUM: None
+  STRIDE: [1, 256, 256]
+  SAMPLES_PER_BATCH: 2
+  PAD_SIZE: [0, 512, 512]
+  OUTPUT_ACT: ["softmax"]

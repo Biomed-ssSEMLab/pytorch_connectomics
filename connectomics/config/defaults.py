@@ -516,6 +516,22 @@ _C.INFERENCE.SAMPLES_PER_BATCH = 4
 _C.INFERENCE.MODEL_RETURN_FEATS = None
 
 
+###############################################################################
+# -----------------------------------------------------------------------------
+# Decoder for EM-SAM 
+# -----------------------------------------------------------------------------
+_C.DECODER = CN()
+
+_C.DECODER.IMAGE_SHAPE = [1024,1024]
+_C.DECODER.INPUT_DIM = 3
+_C.DECODER.OUTPUT_DIM = 3
+_C.DECODER.EMBED_DIM = 768
+_C.DECODER.PATCH_SIZE = 16
+_C.DECODER.DROPOUT = 0.1
+_C.DECODER.ARCHITECTURE = 'sam_vit_b'
+_C.DECODER.CHECKPOINTS = './sam_checkpoints/sam_vit_b_01ec64.pth'
+################################################################################
+
 def get_cfg_defaults():
     r"""Get a yacs CfgNode object with default values for my_project."""
     # Return a clone so that the defaults will not be altered
